@@ -23,6 +23,7 @@ But here's the clincher: as Van Spy's dishin' out the dirt, he realizes he's not
 ## Writeup
 
 ### Initial PCAP Inspecion
+![wireshark](sq1-pic1.png)
 Opening the PCAP in Wireshark, you can clearly see in the 802.11 beacon frames, the SSID for the WiFi network in this capture is `FreeWifiBFC`.  First question, answered!
 
 ### WPA Password
