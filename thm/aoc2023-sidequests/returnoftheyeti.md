@@ -217,6 +217,9 @@ Next, clone the pyrdp repo, and follow the instructions on Github for installati
 
 `pyrdp-player.py VanSpy-PDUs.pyrdp`
 
+![case_num](sq1-pic2.png)
+![yetikey1.txt](sq1-pic3.png)
+
 Now simply watch the RDP replay for the next two flags:
 1. Case number: `31337-0`
 2. yetikey1.txt: `1-1f9548f131522e85ea30e801dfd9b1a4e526003f9e83301faad85e6154ef2834`
