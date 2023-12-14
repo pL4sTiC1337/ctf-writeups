@@ -50,3 +50,17 @@ Seems to be some sort of protection on this website.  Without any further enumer
 #### Port 50628
 A quick check of this port yields something potentially useful!  Seems we have a Trivision NC-227WF HD 720P.
 ![webcam](sq2-pic2.png)
+
+### IP Camera Exploitation
+A quick Google search for Trivision 227WF exploits brings me to https://pierrekim.github.io/blog/2017-03-08-camera-goahead-0day.html. This blog post mentions about 7 potential exploits worth checking out:
+
+* CVE-2017-8224 - Backdoor account
+* CVE-2017-8222 - RSA key and certificates
+* CVE-2017-8225 - Pre-Auth Info Leak (credentials) within the custom http server
+* Authenticated RCE as root
+* Pre-Auth RCE as root
+* CVE-2017-8223 - Misc - Streaming without authentication
+* CVE-2017-8221 - Misc - "Cloud" (Aka Botnet)
+
+Unfortunately, none of these really seemed to pan out.  Started digging deeper, and included the ARM architecture clue in the room name into my searches.  I came across the following write-up: https://no-sec.net/arm-x-challenge-breaking-the-webs/.  Same camera, bingo!
+
