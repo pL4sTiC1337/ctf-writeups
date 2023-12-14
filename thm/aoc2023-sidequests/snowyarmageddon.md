@@ -23,3 +23,24 @@ Remember, this is all about bein' as silent as the falling snow and as cunning a
 
 ### Reconaissance
 First things first, let's launch the challenge VM and see what ports we have open.
+```
+PORT      STATE SERVICE    VERSION
+22/tcp    open  ssh        OpenSSH 8.2p1 Ubuntu 4ubuntu0.9 (Ubuntu Linux; protocol 2.0)
+| ssh-hostkey: 
+|   3072 5e:43:0f:fe:f5:6f:02:d6:92:1d:42:fe:10:3c:31:05 (RSA)
+|   256 d7:16:80:64:ed:1e:29:4a:87:94:63:5a:fe:f1:be:8e (ECDSA)
+|_  256 8b:e5:fd:06:3e:be:15:1a:0b:a9:a8:e4:98:26:80:35 (ED25519)
+23/tcp    open  tcpwrapped
+8080/tcp  open  http       Apache httpd 2.4.57 ((Debian))
+|_http-title: TryHackMe | Access Forbidden - 403
+|_http-server-header: Apache/2.4.57 (Debian)
+50628/tcp open  tcpwrapped
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+```
+#### Port 22 - SSH
+We don't have much to exploit this yet.
+
+#### Port 23
+Port 23 is normally utilized by Telnet.  Tried connecting with `nc -v $IP 23`, but the server killed the connection immediately; tried this a few times with the same result.  Maybe we'll come back to this later.
+
+#### Port 8080
