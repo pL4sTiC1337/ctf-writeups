@@ -44,3 +44,9 @@ We don't have much to exploit this yet.
 Port 23 is normally utilized by Telnet.  Tried connecting with `nc -v $IP 23`, but the server killed the connection immediately; tried this a few times with the same result.  Maybe we'll come back to this later.
 
 #### Port 8080
+Seems to be some sort of protection on this website.  Without any further enumeration or use of tools, every attempt to poke around the website leads me to the following error:
+![only elves](sq2-pic1.png)
+
+#### Port 50628
+A quick check of this port yields something potentially useful!  Seems we have a Trivision NC-227WF HD 720P.
+![webcam](sq2-pic2.png)
