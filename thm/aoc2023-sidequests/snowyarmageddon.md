@@ -162,3 +162,49 @@ pass = Y3tiStarCur!ouspassword=admin
 ![webcam-feed](sq2-pic3.png)
 
 ### Back to Port 8080
+From the initial look at the webserver running on port 8080, there seemed to be some protection preventing "non-elves" from viewing as intended.  Regardless, I figured I'd run a `gobuster` scan and see what I could find.
+```
+gobuster dir -u http://10.10.223.198:8080 -w /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-small.txt 
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://10.10.223.198:8080
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /usr/share/wordlists/dirbuster/directory-list-lowercase-2.3-small.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.6
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+/demo                 (Status: 200) [Size: 41]
+/vendor               (Status: 301) [Size: 322] [--> http://10.10.223.198:8080/vendor/]
+```
+Both of these endpoints got me back to the same 403 Error splash page.  Next, I ran a `nikto` scan to see if I could find anything there.
+```
+nikto -host "http://10.10.223.198:8080/"
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          10.10.223.198
++ Target Hostname:    10.10.223.198
++ Target Port:        8080
++ Start Time:         2023-12-15 01:39:07 (GMT-5)
+---------------------------------------------------------------------------
++ Server: Apache/2.4.57 (Debian)
++ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
++ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ /index.php/123: Cookie PHPSESSID created without the httponly flag. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
++ /index.php/123: Retrieved x-powered-by header: PHP/8.1.26.
++ /.DS_Store: Apache on Mac OSX will serve the .DS_Store file, which contains sensitive information. Configure Apache to ignore this file or upgrade to a newer version. See: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2001-1446
+```
+Again, nothing looked too promising.  I did key in on CVE-2001-1446 though, and figured looking for a `.DS_Store` would only take a second... turns out there were two to be found: `/.DS_Store` and `/vendor/.DS_Store`.  Pulling out any strings I could, I was able to identify the following strings in the `/vendor/.DS_Store` file:
+* composer
+* jean85
+* mongodb
+* psr
+* symfony
+Continuing with the website enumeration, I tried everything from searching for specific file extensions, trying different user-agents, or other 403 bypass techniques.  I soon discovered that adding a trailing `/` at the end of `index.php` gave me a redirect to `login.php`.  It was blocked by the 403 error page again, surprise surprise.  But what happens if we add the trailing `/` to the end of `login.php`?
+![login.php](sq2-pic4.png)
