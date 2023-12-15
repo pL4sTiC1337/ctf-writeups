@@ -206,5 +206,15 @@ Again, nothing looked too promising.  I did key in on CVE-2001-1446 though, and 
 * mongodb
 * psr
 * symfony
+
 Continuing with the website enumeration, I tried everything from searching for specific file extensions, trying different user-agents, or other 403 bypass techniques.  I soon discovered that adding a trailing `/` at the end of `index.php` gave me a redirect to `login.php`.  It was blocked by the 403 error page again, surprise surprise.  But what happens if we add the trailing `/` to the end of `login.php`?
 ![login.php](sq2-pic4.png)
+
+How to get past the authentication? I tried using `hydra` with some fairly common usernames/passwords... no luck. Tried `sqlmap` for potential SQL injection... no luck. But then I remembered the reference to `mongodb` I found in the `.DS_Store` above.  Perhaps we need to try some noSQL injection techniques, specifically for MongoDB.  After some research, finally found the following tool: https://github.com/an0nlk/Nosql-MongoDB-injection-username-password-enumeration
+```
+python nosqli-user-pass-enum.py -u http://10.10.223.198:8080/login.php/ -up username -pp password -ep username -m POST
+...
+username found: Blizzardson
+username found: Frostbite
+
+```
