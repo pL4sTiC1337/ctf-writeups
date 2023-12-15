@@ -265,3 +265,5 @@ Snowballer:rCwBuLJPNzmRGExQucTC
 Snownandez:6Ne2HYXUovEIVOEQg2US
 Tinselova:F6Ymdyzx9C1QeNOcU7FD
 ```
+The one user/pass combo that stands out to me is `Frosteau:HoHoHacked`, so let's head back to `/login.php` and give it a shot.  After logging in, I noticed a PHPSESSID cookie was set and it attempted to redirect me to `index.php`.  Alas, it still blocks non-elves, so maybe let's add the trailing `/` and head to `/index.php/`. Bingo!
+![success.php](sq2-pic5.png)
