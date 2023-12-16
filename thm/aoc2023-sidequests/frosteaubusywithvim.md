@@ -93,7 +93,7 @@ local: flag-2-of-4.sh remote: flag-2-of-4.sh
 
 Viewing the contents of `flag-1-of-4.txt`, we get our first flag: `THM{Let.the.game.begin}`
 
-Our second interesting file, `flag-2-of-4.sh` is a little more interesting: `echo $FLAG2`.  Looks like we're going to need something other than FTP to execute commands and view an environment varible.
+Our second file of note, `flag-2-of-4.sh` is a little more interesting: `echo $FLAG2`.  Looks like we're going to need something other than FTP to execute commands and view an environment varible.
 
 ### Let's Play With vim
 `nc 10.10.237.123 8085` will get us into vim.  Reading some vim documention at https://learnvimscriptthehardway.stevelosh.com/chapters/01.html, it would appear we can utilize its internal `:echo` command.
