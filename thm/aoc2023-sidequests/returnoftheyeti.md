@@ -37,7 +37,7 @@ aircrack-ng VanSpy.pcapng -w /usr/share/wordlists/rockyou.txt
 
       Time left: 4 hours, 40 minutes, 27 seconds                 0.25%
 
-                           KEY FOUND! [ Christmas ]
+                           KEY FOUND! [ ********* ]
 
 
       Master Key     : A8 3F 1D 1D 1D 1F 2D 06 8E D4 47 CE E9 FD 3A AA 
